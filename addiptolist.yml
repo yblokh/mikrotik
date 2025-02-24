@@ -1,15 +1,18 @@
 ---
 - name: Add IP to MikroTik Address List
   hosts: all
-    #hosts: azsm
   gather_facts: no
+  vars:
+    ip: 10.20.30.40
+    ipcomment: "comment"
+    addreslist: listname
   vars_files:
     mikrotik_vars
   tasks:
     - name: Add IP to Address List
       community.routeros.command:
         commands:
-          - "/ip firewall address-list add list=AllowedIPs address=213.249.55.177 comment=\"aval bank ip\""
+          - "/ip firewall address-list add list={{ addresslist }} address={{ ip }} comment={{ ipcomment }}"
       register: result
 
     - name: Debug Output
