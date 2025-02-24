@@ -1,0 +1,24 @@
+---
+- name: Add public SSH key to user 
+  hosts: all
+  gather_facts: no
+  vars:
+    user: username
+    key_file: username.pub  
+  vars_files:
+    - ./mikrotik_vars
+  tasks:
+    - name: Copy SSH Public Key to MikroTik
+      ansible.netcommon.net_put:
+        src: {{ key_file }}
+        protocol: sftp
+        dest: /{{ key_file }}
+    - name: Add SSH Key to User 
+      community.routeros.command:
+        commands:
+          - "/user ssh-keys import user={{ user }} public-key-file={{ key_file }}"
+      register: ssh_result
+
+    - name: Debug SSH Key Output
+      debug:
+        var: ssh_result
